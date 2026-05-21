@@ -6,8 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="吃什么">
-  <meta name="theme-color" content="#667eea">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+  <meta name="theme-color" content="#ff9a9e">
+  <link rel="apple-touch-icon" href="icon.jpg">
   <title>今天吃什么</title>
   <style>
     * {
@@ -18,16 +18,23 @@
     }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
       min-height: 100vh;
       min-height: 100dvh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 24px;
       overscroll-behavior: none;
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
     
     .container {
@@ -37,56 +44,90 @@
     }
     
     .title {
-      color: rgba(255,255,255,0.9);
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 32px;
+      color: rgba(255,255,255,0.95);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-shadow: 0 2px 8px rgba(255,154,158,0.3);
     }
     
     .result {
-      background: rgba(255,255,255,0.95);
-      border-radius: 24px;
-      padding: 48px 32px;
-      margin-bottom: 40px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      background: rgba(255,255,255,0.98);
+      border-radius: 28px;
+      padding: 40px 28px;
+      margin-bottom: 32px;
+      box-shadow: 
+        0 8px 32px rgba(255,154,158,0.25),
+        0 2px 8px rgba(0,0,0,0.08),
+        inset 0 -2px 12px rgba(255,154,158,0.1);
+      animation: cardPop 0.3s ease;
+    }
+    
+    @keyframes cardPop {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
     }
     
     .food {
-      font-size: 56px;
-      margin-bottom: 8px;
+      font-size: 64px;
+      margin-bottom: 12px;
+      animation: emojiBounce 0.4s ease;
+    }
+    
+    @keyframes emojiBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
     
     .food-name {
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 32px;
+      font-weight: 800;
       color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .food-desc {
+      font-size: 15px;
+      color: #888;
+      line-height: 1.5;
+      min-height: 44px;
     }
     
     .btn {
       width: 100%;
-      padding: 24px 32px;
-      font-size: 22px;
-      font-weight: 600;
+      padding: 20px 28px;
+      font-size: 20px;
+      font-weight: 700;
       color: white;
-      background: rgba(255,255,255,0.2);
-      border: 3px solid rgba(255,255,255,0.5);
-      border-radius: 20px;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+      border: none;
+      border-radius: 16px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      min-height: 80px;
+      gap: 10px;
+      min-height: 64px;
+      box-shadow: 0 4px 16px rgba(255,154,158,0.4);
     }
     
     .btn:active {
-      transform: scale(0.96);
-      background: rgba(255,255,255,0.3);
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(255,154,158,0.3);
     }
     
     .btn-icon {
-      font-size: 28px;
+      font-size: 24px;
+    }
+    
+    .tip {
+      margin-top: 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
     }
   </style>
   <link rel="manifest" href="manifest.json">
@@ -98,54 +139,84 @@
     <div class="result">
       <div class="food" id="foodEmoji">🍜</div>
       <div class="food-name" id="foodName">拉面</div>
+      <div class="food-desc" id="foodDesc">浓郁豚骨汤底，配上劲道面条</div>
     </div>
     
     <button class="btn" id="refreshBtn">
       <span class="btn-icon">🎲</span>
       <span>换一个</span>
     </button>
+    
+    <div class="tip" id="tip">💡 小贴士：配个溏心蛋更香哦</div>
   </div>
 
   <script>
     const foods = [
-      { emoji: "🍜", name: "拉面" },
-      { emoji: "🍣", name: "寿司" },
-      { emoji: "🍔", name: "汉堡" },
-      { emoji: "🍕", name: "披萨" },
-      { emoji: "🥗", name: "沙拉" },
-      { emoji: "🍲", name: "火锅" },
-      { emoji: "🍱", name: "便当" },
-      { emoji: "🌮", name: "墨西哥卷" },
-      { emoji: "🍛", name: "咖喱饭" },
-      { emoji: "🥘", name: "煲仔饭" },
-      { emoji: "🍝", name: "意面" },
-      { emoji: "🥡", name: "炒饭" },
-      { emoji: "🥟", name: "饺子" },
-      { emoji: "🥪", name: "三明治" },
-      { emoji: "🥙", name: "卷饼" },
-      { emoji: "🍜", name: "米粉" },
-      { emoji: "🦐", name: "小龙虾" },
-      { emoji: "🍗", name: "炸鸡" }
+      { emoji: "🍜", name: "日式拉面", desc: "浓郁豚骨汤底，劲道面条，一碗满足" },
+      { emoji: "🍣", name: "精致寿司", desc: "新鲜刺身配软糯米饭，清爽怡人" },
+      { emoji: "🍔", name: "经典汉堡", desc: "厚实肉饼 + 融化芝士，一口爆汁" },
+      { emoji: "🍕", name: "意式披萨", desc: "薄脆饼底，丰富配料，芝士拉丝" },
+      { emoji: "🥗", name: "轻食沙拉", desc: "新鲜蔬菜 + 健康蛋白，轻盈饱腹" },
+      { emoji: "🍲", name: "热辣火锅", desc: "沸腾锅底，随心涮煮，热闹暖胃" },
+      { emoji: "🍱", name: "日式便当", desc: "精致小份，荤素搭配，颜值在线" },
+      { emoji: "🌮", name: "墨西哥卷", desc: "酥脆饼皮包裹丰富馅料，酸辣开胃" },
+      { emoji: "🍛", name: "咖喱饭", desc: "金黄咖喱浇淋米饭，香气扑鼻" },
+      { emoji: "🥘", name: "煲仔饭", desc: "砂锅慢煲，锅巴焦香，广东风味" },
+      { emoji: "🍝", name: "奶油意面", desc: "丝滑白酱裹缠面条，浪漫优雅" },
+      { emoji: "🥡", name: "扬州炒饭", desc: "粒粒分明，火腿虾仁，经典美味" },
+      { emoji: "🥟", name: "手工饺子", desc: "薄皮大馅，鲜香多汁，家的味道" },
+      { emoji: "🥪", name: "厚切三明治", desc: "多层夹心，营养均衡，便捷饱腹" },
+      { emoji: "🥙", name: "中东卷饼", desc: "烤肉 + 酱料 + 蔬菜，一口满足" },
+      { emoji: "🍜", name: "桂林米粉", desc: "酸辣爽口，卤味丰富，广西特色" },
+      { emoji: "🦐", name: "麻辣小龙虾", desc: "红油浸泡，蒜香浓郁，夏日必备" },
+      { emoji: "🍗", name: "脆皮炸鸡", desc: "外酥里嫩，金黄诱人，快乐源泉" },
+      { emoji: "🥣", name: "广东粥品", desc: "绵滑细腻，养胃暖心，清淡舒适" },
+      { emoji: "🫕", name: "韩式部队锅", desc: "泡菜拉面午餐肉，热辣过瘾" },
+      { emoji: "🥩", name: "铁板烤肉", desc: "滋滋作响，肉香四溢，大口吃肉" },
+      { emoji: "🧆", name: "印度咖喱球", desc: "酥脆外皮，土豆内馅，异域风情" }
+    ];
+
+    const tips = [
+      "💡 小贴士：配个溏心蛋更香哦",
+      "💡 小贴士：加点辣椒油更有味",
+      "💡 小贴士：记得配杯冰饮解腻",
+      "💡 小贴士：和朋友分享更快乐",
+      "💡 小贴士：饭后走走助消化",
+      "💡 小贴士：试试加份小菜",
+      "💡 小贴士：趁热吃口感最佳",
+      "💡 小贴士：拍张照片记录美好"
     ];
 
     const foodEmoji = document.getElementById('foodEmoji');
     const foodName = document.getElementById('foodName');
+    const foodDesc = document.getElementById('foodDesc');
+    const tipEl = document.getElementById('tip');
     const refreshBtn = document.getElementById('refreshBtn');
 
     function pickFood() {
       const food = foods[Math.floor(Math.random() * foods.length)];
+      const tip = tips[Math.floor(Math.random() * tips.length)];
+      
       foodEmoji.textContent = food.emoji;
       foodName.textContent = food.name;
+      foodDesc.textContent = food.desc;
+      tipEl.textContent = tip;
+      
+      // 重新触发动画
+      const result = document.querySelector('.result');
+      result.style.animation = 'none';
+      result.offsetHeight; // trigger reflow
+      result.style.animation = 'cardPop 0.3s ease';
+      
+      const emoji = document.querySelector('.food');
+      emoji.style.animation = 'none';
+      emoji.offsetHeight;
+      emoji.style.animation = 'emojiBounce 0.4s ease';
     }
 
-    refreshBtn.addEventListener('click', () => {
-      pickFood();
-    });
-
-    // 初始化
+    refreshBtn.addEventListener('click', pickFood);
     pickFood();
 
-    // 注册 Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
