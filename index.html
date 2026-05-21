@@ -54,43 +54,115 @@
     .result {
       background: rgba(255,255,255,0.98);
       border-radius: 28px;
-      padding: 40px 28px;
+      padding: 36px 24px;
       margin-bottom: 32px;
       box-shadow: 
         0 8px 32px rgba(255,154,158,0.25),
         0 2px 8px rgba(0,0,0,0.08),
         inset 0 -2px 12px rgba(255,154,158,0.1);
-      animation: cardPop 0.3s ease;
+      animation: cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .result::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255,255,255,0.3) 50%,
+        transparent 60%
+      );
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
     }
     
     @keyframes cardPop {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      100% { transform: scale(1); opacity: 1; }
+      0% { transform: scale(0.8) rotateY(90deg); opacity: 0; }
+      50% { transform: scale(1.05) rotateY(0deg); opacity: 1; }
+      100% { transform: scale(1) rotateY(0deg); opacity: 1; }
     }
     
     .food {
       font-size: 64px;
-      margin-bottom: 12px;
-      animation: emojiBounce 0.4s ease;
+      margin-bottom: 10px;
+      animation: emojiBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: inline-block;
     }
     
     @keyframes emojiBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      0% { transform: translateY(0) scale(0.5); opacity: 0; }
+      30% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+      50% { transform: translateY(-10px) scale(1.1); }
+      70% { transform: translateY(-5px) scale(1); }
+      100% { transform: translateY(0) scale(1); }
     }
     
     .food-name {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       color: #333;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      animation: fadeInUp 0.5s ease 0.2s both;
+    }
+    
+    .food-brand {
+      font-size: 14px;
+      color: #ff6b81;
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding: 6px 12px;
+      background: rgba(255,107,129,0.1);
+      border-radius: 8px;
+      display: inline-block;
+      animation: fadeInUp 0.5s ease 0.3s both;
     }
     
     .food-desc {
-      font-size: 15px;
+      font-size: 14px;
       color: #888;
       line-height: 1.5;
-      min-height: 44px;
+      min-height: 40px;
+      animation: fadeInUp 0.5s ease 0.4s both;
+    }
+    
+    @keyframes fadeInUp {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    
+    .food-name {
+      font-size: 28px;
+      font-weight: 800;
+      color: #333;
+      margin-bottom: 6px;
+    }
+    
+    .food-brand {
+      font-size: 14px;
+      color: #ff6b81;
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding: 6px 12px;
+      background: rgba(255,107,129,0.1);
+      border-radius: 8px;
+      display: inline-block;
+    }
+    
+    .food-desc {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.5;
+      min-height: 40px;
     }
     
     .btn {
@@ -103,22 +175,56 @@
       border: none;
       border-radius: 16px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       min-height: 64px;
       box-shadow: 0 4px 16px rgba(255,154,158,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+    
+    .btn:active::after {
+      width: 300px;
+      height: 300px;
     }
     
     .btn:active {
-      transform: scale(0.97);
+      transform: scale(0.95);
       box-shadow: 0 2px 8px rgba(255,154,158,0.3);
+    }
+    
+    .btn.loading {
+      pointer-events: none;
+    }
+    
+    .btn.loading .btn-icon {
+      animation: spinDice 0.6s ease infinite;
+    }
+    
+    @keyframes spinDice {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
     }
     
     .btn-icon {
       font-size: 24px;
+      transition: transform 0.2s ease;
     }
     
     .tip {
@@ -139,6 +245,7 @@
     <div class="result">
       <div class="food" id="foodEmoji">🍜</div>
       <div class="food-name" id="foodName">拉面</div>
+      <div class="food-brand" id="foodBrand">📍 味千拉面</div>
       <div class="food-desc" id="foodDesc">浓郁豚骨汤底，配上劲道面条</div>
     </div>
     
@@ -152,28 +259,81 @@
 
   <script>
     const foods = [
-      { emoji: "🍜", name: "日式拉面", desc: "浓郁豚骨汤底，劲道面条，一碗满足" },
-      { emoji: "🍣", name: "精致寿司", desc: "新鲜刺身配软糯米饭，清爽怡人" },
-      { emoji: "🍔", name: "经典汉堡", desc: "厚实肉饼 + 融化芝士，一口爆汁" },
-      { emoji: "🍕", name: "意式披萨", desc: "薄脆饼底，丰富配料，芝士拉丝" },
-      { emoji: "🥗", name: "轻食沙拉", desc: "新鲜蔬菜 + 健康蛋白，轻盈饱腹" },
-      { emoji: "🍲", name: "热辣火锅", desc: "沸腾锅底，随心涮煮，热闹暖胃" },
-      { emoji: "🍱", name: "日式便当", desc: "精致小份，荤素搭配，颜值在线" },
-      { emoji: "🌮", name: "墨西哥卷", desc: "酥脆饼皮包裹丰富馅料，酸辣开胃" },
-      { emoji: "🍛", name: "咖喱饭", desc: "金黄咖喱浇淋米饭，香气扑鼻" },
-      { emoji: "🥘", name: "煲仔饭", desc: "砂锅慢煲，锅巴焦香，广东风味" },
-      { emoji: "🍝", name: "奶油意面", desc: "丝滑白酱裹缠面条，浪漫优雅" },
-      { emoji: "🥡", name: "扬州炒饭", desc: "粒粒分明，火腿虾仁，经典美味" },
-      { emoji: "🥟", name: "手工饺子", desc: "薄皮大馅，鲜香多汁，家的味道" },
-      { emoji: "🥪", name: "厚切三明治", desc: "多层夹心，营养均衡，便捷饱腹" },
-      { emoji: "🥙", name: "中东卷饼", desc: "烤肉 + 酱料 + 蔬菜，一口满足" },
-      { emoji: "🍜", name: "桂林米粉", desc: "酸辣爽口，卤味丰富，广西特色" },
-      { emoji: "🦐", name: "麻辣小龙虾", desc: "红油浸泡，蒜香浓郁，夏日必备" },
-      { emoji: "🍗", name: "脆皮炸鸡", desc: "外酥里嫩，金黄诱人，快乐源泉" },
-      { emoji: "🥣", name: "广东粥品", desc: "绵滑细腻，养胃暖心，清淡舒适" },
-      { emoji: "🫕", name: "韩式部队锅", desc: "泡菜拉面午餐肉，热辣过瘾" },
-      { emoji: "🥩", name: "铁板烤肉", desc: "滋滋作响，肉香四溢，大口吃肉" },
-      { emoji: "🧆", name: "印度咖喱球", desc: "酥脆外皮，土豆内馅，异域风情" }
+      { emoji: "🍜", name: "日式拉面", brands: ["味千拉面", "一兰拉面", "拉面说", "博多一幸亭"], desc: "浓郁豚骨汤底，劲道面条，一碗满足" },
+      { emoji: "🍣", name: "精致寿司", brands: ["摩摩寿司", "鲜目录寿司", "禾绿回转寿司", "N多寿司"], desc: "新鲜刺身配软糯米饭，清爽怡人" },
+      { emoji: "🍔", name: "经典汉堡", brands: ["麦当劳", "肯德基", "汉堡王", "德克士", "华莱士", "塔斯汀"], desc: "厚实肉饼 + 融化芝士，一口爆汁" },
+      { emoji: "🍕", name: "意式披萨", brands: ["达美乐", "必胜客", "棒约翰", "Pizza Hut"], desc: "薄脆饼底，丰富配料，芝士拉丝" },
+      { emoji: "🥗", name: "轻食沙拉", brands: ["轻食主义", "沙野轻食", "超能鹿战队", "Gaga鲜语"], desc: "新鲜蔬菜 + 健康蛋白，轻盈饱腹" },
+      { emoji: "🍲", name: "热辣火锅", brands: ["海底捞", "呷哺呷哺", "小龙坎", "大渝火锅", "蜀大侠"], desc: "沸腾锅底，随心涮煮，热闹暖胃" },
+      { emoji: "🍱", name: "日式便当", brands: ["吉野家", "食其家", "味盒便当", "米米便当"], desc: "精致小份，荤素搭配，颜值在线" },
+      { emoji: "🌮", name: "墨西哥卷", brands: ["塔可钟", "墨西哥餐厅", "西贝莜面村"], desc: "酥脆饼皮包裹丰富馅料，酸辣开胃" },
+      { emoji: "🍛", name: "咖喱饭", brands: ["CoCo壹番屋", "咖喱猫", "印度餐厅"], desc: "金黄咖喱浇淋米饭，香气扑鼻" },
+      { emoji: "🥘", name: "煲仔饭", brands: ["真功夫", "煲仔皇", "广东煲仔饭", "港式茶餐厅"], desc: "砂锅慢煲，锅巴焦香，广东风味" },
+      { emoji: "🍝", name: "奶油意面", brands: ["西堤牛排", "意式餐厅", "必胜客"], desc: "丝滑白酱裹缠面条，浪漫优雅" },
+      { emoji: "🥡", name: "扬州炒饭", brands: ["真功夫", "永和大王", "中式快餐"], desc: "粒粒分明，火腿虾仁，经典美味" },
+      { emoji: "🥟", name: "手工饺子", brands: ["东方饺子王", "喜家德", "袁记云饺", "大娘水饺"], desc: "薄皮大馅，鲜香多汁，家的味道" },
+      { emoji: "🥪", name: "厚切三明治", brands: ["赛百味", "星巴克", "瑞幸咖啡"], desc: "多层夹心，营养均衡，便捷饱腹" },
+      { emoji: "🥙", name: "中东卷饼", brands: ["沙瓦玛", "中东餐厅", "异域风情"], desc: "烤肉 + 酱料 + 蔬菜，一口满足" },
+      { emoji: "🍜", name: "桂林米粉", brands: ["桂林米粉店", "螺蛳粉先生", "米粉世家"], desc: "酸辣爽口，卤味丰富，广西特色" },
+      { emoji: "🦐", name: "麻辣小龙虾", brands: ["外卖小龙虾", "虾吃虾涮", "麻辣诱惑"], desc: "红油浸泡，蒜香浓郁，夏日必备" },
+      { emoji: "🍗", name: "脆皮炸鸡", brands: ["肯德基", "麦当劳", "华莱士", "正新鸡排", "德克士"], desc: "外酥里嫩，金黄诱人，快乐源泉" },
+      { emoji: "🥣", name: "广东粥品", brands: ["潮汕粥店", "广东粥王", "砂锅粥"], desc: "绵滑细腻，养胃暖心，清淡舒适" },
+      { emoji: "🫕", name: "韩式部队锅", brands: ["韩式料理店", "首尔烧烤", "朝鲜族餐厅"], desc: "泡菜拉面午餐肉，热辣过瘾" },
+      { emoji: "🥩", name: "铁板烤肉", brands: ["铁板烧餐厅", "烤肉店", "牛排家"], desc: "滋滋作响，肉香四溢，大口吃肉" },
+      { emoji: "🧆", name: "印度咖喱球", brands: ["印度餐厅", "香料屋", "异域美食"], desc: "酥脆外皮，土豆内馅，异域风情" },
+      
+      // 中式快餐 - 美团热门
+      { emoji: "🥘", name: "麻辣烫", brands: ["杨国福麻辣烫", "张亮麻辣烫", "刁四麻辣烫", "马玉涛麻辣烫", "福香源麻辣烫"], desc: "自选菜品，麻辣汤底，随心搭配" },
+      { emoji: "🍲", name: "冒菜", brands: ["芙蓉树下", "毛记冒菜", "成都冒菜", "川味冒菜"], desc: "一人独享火锅，麻辣鲜香，成都味道" },
+      { emoji: "🍗", name: "黄焖鸡米饭", brands: ["杨铭宇黄焖鸡", "黄焖鸡米饭", "润香黄焖鸡"], desc: "鸡肉焖煮，酱香浓郁，米饭杀手" },
+      { emoji: "🐟", name: "酸菜鱼", brands: ["太二酸菜鱼", "鱼你在一起", "酸菜鱼米饭"], desc: "酸爽开胃，鱼片嫩滑，川菜经典" },
+      { emoji: "🥩", name: "红烧肉盖饭", brands: ["真功夫", "中式快餐店", "外婆家"], desc: "肥而不腻，入口即化，家常美味" },
+      { emoji: "🌶️", name: "回锅肉盖饭", brands: ["川菜馆", "中式快餐", "老四川"], desc: "五花肉配青椒，川味下饭神器" },
+      { emoji: "🥬", name: "鱼香肉丝盖饭", brands: ["川菜馆", "中式快餐", "四川小馆"], desc: "酸甜微辣，肉丝嫩滑，百吃不厌" },
+      { emoji: "🍅", name: "番茄牛腩饭", brands: ["真功夫", "中式快餐店", "番茄小馆"], desc: "番茄酸甜，牛腩软烂，暖心暖胃" },
+      { emoji: "🥚", name: "麻婆豆腐", brands: ["川菜馆", "老四川", "成都小馆"], desc: "麻辣烫鲜，豆腐嫩滑，川菜灵魂" },
+      { emoji: "茄子", name: "肉末茄子盖饭", brands: ["中式快餐", "家常菜馆", "东北菜"], desc: "茄子软糯，肉末鲜香，下饭绝配" },
+      
+      // 地方特色 - 美团必点
+      { emoji: "🥙", name: "西安肉夹馍", brands: ["肉夹馍店", "凉皮肉夹馍", "老潼关肉夹馍", "秦镇肉夹馍"], desc: "酥脆白吉馍，腊汁肉，古城风味" },
+      { emoji: "🥜", name: "陕西凉皮", brands: ["魏家凉皮", "凉皮先生", "秦镇凉皮"], desc: "爽滑劲道，麻辣鲜香，夏日首选" },
+      { emoji: "🫕", name: "兰州牛肉面", brands: ["马子禄牛肉面", "兰州拉面", "东方宫", "马记永"], desc: "清汤醇厚，牛肉软烂，西北经典" },
+      { emoji: "🥟", name: "北方锅包肉", brands: ["东北菜馆", "老厨家", "东北小馆"], desc: "外酥里嫩，酸甜可口，东北名菜" },
+      { emoji: "🥘", name: "重庆小面", brands: ["重庆小面馆", "豌杂面", "山城小面"], desc: "麻辣鲜香，面条劲道，山城早餐" },
+      { emoji: "🥣", name: "胡辣汤", brands: ["逍遥镇胡辣汤", "河南早餐", "北舞渡胡辣汤"], desc: "胡椒辛辣，浓稠暖胃，河南早点" },
+      { emoji: "🥡", name: "过桥米线", brands: ["云南米线", "桥香园", "蒙自源"], desc: "滚烫鸡汤，丰富配料，云南传奇" },
+      { emoji: "🦆", name: "北京烤鸭", brands: ["全聚德", "大董烤鸭", "便宜坊", "四季民福"], desc: "皮脆肉嫩，蘸酱卷饼，京城名片" },
+      { emoji: "🥬", name: "南京鸭血粉丝", brands: ["鸭血粉丝汤", "回味鸭血粉丝", "南京小吃"], desc: "鸭血嫩滑，粉丝爽口，金陵小吃" },
+      { emoji: "🥟", name: "上海生煎包", brands: ["小杨生煎", "大壶春", "东泰祥生煎"], desc: "底部焦脆，肉馅鲜香，沪上名点" },
+      
+      // 夜宵小吃 - 美团爆单
+      { emoji: "🔥", name: "烧烤拼盘", brands: ["丰茂烤串", "很久以前羊肉串", "木屋烧烤", "聚点串吧"], desc: "炭火烧烤，烟香四溢，夜宵之王" },
+      { emoji: "🥢", name: "炸串", brands: ["正新炸串", "炸串先生", "街边炸串"], desc: "油炸酥脆，酱料浓郁，街头美味" },
+      { emoji: "🦐", name: "蒜蓉小龙虾", brands: ["外卖小龙虾", "虾皇", "文和友小龙虾"], desc: "蒜香浓郁，虾肉弹嫩，夏日标配" },
+      { emoji: "🦐", name: "十三香小龙虾", brands: ["外卖小龙虾", "盱眙小龙虾", "麻辣小龙虾"], desc: "香料丰富，麻辣鲜香，口味经典" },
+      { emoji: "🍜", name: "柳州螺蛳粉", brands: ["螺蛳粉先生", "好欢螺", "螺霸王", "柳州螺蛳粉"], desc: "酸辣鲜爽，螺汤浓郁，广西爆款" },
+      { emoji: "🥖", name: "长沙臭豆腐", brands: ["黑色经典", "文和友臭豆腐", "罗家臭豆腐"], desc: "外焦里嫩，特制酱料，越臭越香" },
+      { emoji: "🥚", name: "铁板烧", brands: ["铁板烧餐厅", "日式铁板", "铁板料理"], desc: "高温快烤，锁住鲜味，现做现吃" },
+      { emoji: "🥘", name: "串串香", brands: ["钢管厂五区小郡肝", "马路边边", "冒椒火辣", "串串香"], desc: "竹签串菜，麻辣锅底，自选自涮" },
+      
+      // 西式快餐 - 美团热门
+      { emoji: "🍟", name: "炸鸡薯条", brands: ["麦当劳", "肯德基", "汉堡王", "华莱士"], desc: "金黄酥脆，外酥里嫩，快乐套餐" },
+      { emoji: "🧀", name: "芝士焗饭", brands: ["焗饭小厨", "西式简餐", "芝士控"], desc: "芝士拉丝，焗烤香气，西式简餐" },
+      { emoji: "🥩", name: "牛排套餐", brands: ["西堤牛排", "王品牛排", "豪客来", "牛排家"], desc: "嫩煎牛排，配菜丰富，西餐经典" },
+      { emoji: "🥪", name: "赛百味潜艇堡", brands: ["赛百味", "三明治店", "星巴克"], desc: "长条面包，丰富馅料，健康快餐" },
+      
+      // 日韩料理 - 美团人气
+      { emoji: "🍚", name: "韩式石锅拌饭", brands: ["韩式料理", "首尔小吃", "朝鲜族餐厅"], desc: "石锅焦香，蔬菜丰富，韩国国民" },
+      { emoji: "🥩", name: "韩式烤肉套餐", brands: ["首尔烧烤", "韩式烤肉", "朝鲜族餐厅"], desc: "五花肉配生菜，烤出焦香" },
+      { emoji: "🍜", name: "日式乌冬面", brands: ["味千拉面", "日式面馆", "乌冬面店"], desc: "面条粗滑，汤底清淡，日式风味" },
+      { emoji: "🥘", name: "鳗鱼饭", brands: ["鳗鱼饭专门店", "日式料理", "日本餐厅"], desc: "烤鳗盖饭，酱香浓郁，日式奢华" },
+      { emoji: "🍤", name: "天妇罗套餐", brands: ["日式料理店", "天妇罗小厨", "日本餐厅"], desc: "酥脆油炸，蘸酱清爽，日式经典" },
+      { emoji: "🥘", name: "日式烧肉定食", brands: ["日式烧肉", "炭火烧肉", "日本料理"], desc: "炭火烧肉，米饭配菜，和风套餐" },
+      
+      // 甜点饮品 - 美团必点
+      { emoji: "🧁", name: "下午茶套餐", brands: ["喜茶", "奈雪的茶", "星巴克", "瑞幸", "蜜雪冰城"], desc: "蛋糕奶茶，午后惬意，甜蜜时光" },
+      { emoji: "🥤", name: "奶茶配炸鸡", brands: ["蜜雪冰城", "茶百道", "一点点", "古茗", "书亦烧仙草"], desc: "快乐组合，奶茶解腻，炸鸡过瘾" },
+      { emoji: "🧇", name: "华夫饼套餐", brands: ["甜品店", "下午茶小馆", "冰淇淋店"], desc: "酥脆华夫，冰淇淋顶，甜蜜治愈" }
     ];
 
     const tips = [
@@ -189,29 +349,40 @@
 
     const foodEmoji = document.getElementById('foodEmoji');
     const foodName = document.getElementById('foodName');
+    const foodBrand = document.getElementById('foodBrand');
     const foodDesc = document.getElementById('foodDesc');
     const tipEl = document.getElementById('tip');
     const refreshBtn = document.getElementById('refreshBtn');
 
     function pickFood() {
-      const food = foods[Math.floor(Math.random() * foods.length)];
-      const tip = tips[Math.floor(Math.random() * tips.length)];
+      // 添加 loading 动画
+      refreshBtn.classList.add('loading');
       
-      foodEmoji.textContent = food.emoji;
-      foodName.textContent = food.name;
-      foodDesc.textContent = food.desc;
-      tipEl.textContent = tip;
-      
-      // 重新触发动画
-      const result = document.querySelector('.result');
-      result.style.animation = 'none';
-      result.offsetHeight; // trigger reflow
-      result.style.animation = 'cardPop 0.3s ease';
-      
-      const emoji = document.querySelector('.food');
-      emoji.style.animation = 'none';
-      emoji.offsetHeight;
-      emoji.style.animation = 'emojiBounce 0.4s ease';
+      setTimeout(() => {
+        const food = foods[Math.floor(Math.random() * foods.length)];
+        const brand = food.brands[Math.floor(Math.random() * food.brands.length)];
+        const tip = tips[Math.floor(Math.random() * tips.length)];
+        
+        foodEmoji.textContent = food.emoji;
+        foodName.textContent = food.name;
+        foodBrand.textContent = "📍 " + brand;
+        foodDesc.textContent = food.desc;
+        tipEl.textContent = tip;
+        
+        // 重新触发动画
+        const result = document.querySelector('.result');
+        result.style.animation = 'none';
+        result.offsetHeight;
+        result.style.animation = 'cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        
+        const emoji = document.querySelector('.food');
+        emoji.style.animation = 'none';
+        emoji.offsetHeight;
+        emoji.style.animation = 'emojiBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        
+        // 移除 loading 状态
+        refreshBtn.classList.remove('loading');
+      }, 300); // 300ms 延迟，增加期待感
     }
 
     refreshBtn.addEventListener('click', pickFood);
